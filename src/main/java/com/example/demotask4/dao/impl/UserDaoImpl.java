@@ -59,9 +59,8 @@ public class UserDaoImpl implements UserDao {
         } catch (Exception e) {
             LOGGER.error("Error in inserting user");
             e.printStackTrace();
-        }finally {
-            return "Error in inserting user";
         }
+        return "Error in inserting user";
     }
     @Override
     public void updateUser(User user, int id) {

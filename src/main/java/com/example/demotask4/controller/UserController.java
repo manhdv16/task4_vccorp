@@ -6,7 +6,6 @@ import com.example.demotask4.model.User;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -23,7 +22,7 @@ public class UserController {
         }
         return ResponseEntity.ok(u);
     }
-    @GetMapping("users")
+    @GetMapping("users/name")
     public ResponseEntity<?> getUserByName(@RequestParam String name) {
         User u = userDao.findUserByName(name);
         if(u == null) {
@@ -31,7 +30,7 @@ public class UserController {
         }
         return ResponseEntity.ok(u);
     }
-    @GetMapping("users")
+    @GetMapping("users/address")
     public ResponseEntity<?> getUserByAddress(@RequestParam String address) {
         List<User> list = userDao.findUserByAddress(address);
         if(list.size() == 0) {
