@@ -11,6 +11,6 @@ public interface UserDao {
     public User findUserById(int id);
     public User findUserByName(String name);
     public List<User> findUserByAddress(String address);
-    public void sortUsersByName();
+    public List<User> sortUsersByName();
     public String validateUser(User user);
 }

@@ -55,12 +55,12 @@ public class UserDaoImpl implements UserDao {
                 return "User inserted successfully";
             } else {
                 LOGGER.error("Error in inserting user");
+                return "Error in inserting user";
             }
         } catch (Exception e) {
-            LOGGER.error("Error in inserting user");
-            e.printStackTrace();
+            LOGGER.error("Error in inserting user", e);
+            return "Error in inserting user";
         }
-        return "Error in inserting user";
     }
     @Override
     public void updateUser(User user, int id) {
@@ -81,8 +81,7 @@ public class UserDaoImpl implements UserDao {
                 LOGGER.error("Error in updating user");
             }
         } catch (Exception e) {
-            LOGGER.error("Error in updating user");
-            e.printStackTrace();
+            LOGGER.error("Error in updating user", e);
         }
     }
     @Override
@@ -99,8 +98,7 @@ public class UserDaoImpl implements UserDao {
                 LOGGER.error("Error in deleting user");
             }
         }catch (Exception e) {
-            LOGGER.error("Error in deleting user");
-            e.printStackTrace();
+            LOGGER.error("Error in deleting user", e);
         }
     }
     @Override
@@ -122,13 +120,10 @@ public class UserDaoImpl implements UserDao {
             return user;
           } else {
             LOGGER.error("User not found");
+            return null;
           }
         }catch (Exception e) {
-            LOGGER.error("Error in finding user by id");
-            e.printStackTrace();
-        }
-        finally {
-            LOGGER.error("User not found");
+            LOGGER.error("Error in finding user by id", e);
             return null;
         }
     }
@@ -151,12 +146,10 @@ public class UserDaoImpl implements UserDao {
             return user;
           } else {
             LOGGER.error("User not found");
+            return null;
           }
         }catch (Exception e) {
-            LOGGER.error("Error in finding user by name");
-            e.printStackTrace();
-        }finally {
-            LOGGER.error("User not found");
+            LOGGER.error("Error in finding user by name", e);
             return null;
         }
     }
@@ -183,23 +176,22 @@ public class UserDaoImpl implements UserDao {
                 return users;
             } else {
                 LOGGER.error("User not found");
+                return null;
             }
         }catch (Exception e) {
-            LOGGER.error("Error in finding user by address");
-            e.printStackTrace();
-        }finally {
-            LOGGER.error("User not found");
+            LOGGER.error("Error in finding user by address", e);
             return null;
         }
     }
 
     @Override
-    public void sortUsersByName() {
+    public List<User> sortUsersByName() {
         try(Connection connection = getConnection()) {
             LOGGER.info("Sorting users by name");
             PreparedStatement ps = connection.prepareStatement(SORT_USER_BY_NAME);
             ResultSet rs = null;
             rs = ps.executeQuery();
+            List<User> users = new ArrayList<>();
             while(rs.next()) {
                 User user = new User();
                 user.setName(rs.getString("name"));
@@ -207,13 +199,12 @@ public class UserDaoImpl implements UserDao {
                 user.setPhone(rs.getString("phone"));
                 user.setAddress(rs.getString("address"));
                 user.setAge(rs.getInt("age"));
-                LOGGER.info(user);
+                users.add(user);
             }
+            return users;
         }catch (Exception e) {
-            LOGGER.error("Error in sorting users by name");
-            e.printStackTrace();
-        } finally {
-            LOGGER.error("Error in sorting users by name");
+            LOGGER.error("Error in sorting users by name", e);
+            return null;
         }
     }
 

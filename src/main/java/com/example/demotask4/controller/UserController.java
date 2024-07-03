@@ -3,6 +3,7 @@ package com.example.demotask4.controller;
 import com.example.demotask4.dao.UserDao;
 import com.example.demotask4.dao.impl.UserDaoImpl;
 import com.example.demotask4.model.User;
+import com.example.demotask4.response.ApiResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,7 +21,8 @@ public class UserController {
         if(u == null) {
             return ResponseEntity.ok("User not found");
         }
-        return ResponseEntity.ok(u);
+        ApiResponse<User> response = new ApiResponse<>(1, 200, "User found", u);
+        return ResponseEntity.ok(response);
     }
     @GetMapping("users/name")
     public ResponseEntity<?> getUserByName(@RequestParam String name) {
@@ -28,7 +30,8 @@ public class UserController {
         if(u == null) {
             return ResponseEntity.ok("User not found");
         }
-        return ResponseEntity.ok(u);
+        ApiResponse<User> response = new ApiResponse<>(1, 200, "User found", u);
+        return ResponseEntity.ok(response);
     }
     @GetMapping("users/address")
     public ResponseEntity<?> getUserByAddress(@RequestParam String address) {
@@ -36,11 +39,12 @@ public class UserController {
         if(list.size() == 0) {
             return ResponseEntity.ok("User not found");
         }
-        return ResponseEntity.ok(list);
+        ApiResponse<List<User>> response = new ApiResponse<>(1, 200, "User found", list);
+        return ResponseEntity.ok(response);
     }
     @GetMapping("users/sort")
     public ResponseEntity<?> sortUsersByName(@RequestParam String name) {
-        userDao.sortUsersByName();
+        List<User> users = userDao.sortUsersByName();
         return ResponseEntity.ok("Users sorted by name");
     }
     @PostMapping("users")
