@@ -63,7 +63,7 @@ public class UserDaoImpl implements UserDao {
         }
     }
     @Override
-    public void updateUser(User user, int id) {
+    public Boolean updateUser(User user, int id) {
         try(Connection connection = getConnection()) {
             LOGGER.info("Updating user");
             PreparedStatement ps =  connection.prepareStatement(UPDATE_USER);
@@ -77,15 +77,18 @@ public class UserDaoImpl implements UserDao {
             result = ps.executeUpdate();
             if(result > 0) {
                 LOGGER.info("User updated successfully");
+                return true;
             } else {
                 LOGGER.error("Error in updating user");
+                return false;
             }
         } catch (Exception e) {
             LOGGER.error("Error in updating user", e);
+            return false;
         }
     }
     @Override
-    public void deleteUserById(int id) {
+    public Boolean deleteUserById(int id) {
         try(Connection connection = getConnection()) {
             LOGGER.info("Deleting user");
             PreparedStatement ps = connection.prepareStatement(DELETE_USER_BY_ID);
@@ -94,11 +97,14 @@ public class UserDaoImpl implements UserDao {
             result = ps.executeUpdate();
             if(result > 0) {
                 LOGGER.info("User deleted successfully");
+                return true;
             } else {
                 LOGGER.error("Error in deleting user");
+                return false;
             }
         }catch (Exception e) {
             LOGGER.error("Error in deleting user", e);
+            return false;
         }
     }
     @Override
