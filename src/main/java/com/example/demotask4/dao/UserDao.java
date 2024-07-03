@@ -13,4 +13,5 @@ public interface UserDao {
     public List<User> findUserByAddress(String address);
     public List<User> sortUsersByName();
     public String validateUser(User user);
+    public Boolean generateRandomUsers(int n);
 }

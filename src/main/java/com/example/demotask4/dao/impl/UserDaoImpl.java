@@ -6,12 +6,11 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class UserDaoImpl implements UserDao {
     private static final Logger LOGGER = LogManager.getLogger();
@@ -226,5 +225,53 @@ public class UserDaoImpl implements UserDao {
             return "Address should not be empty";
         }
         return "true";
+    }
+
+    @Override
+    public Boolean generateRandomUsers(int n) {
+        try (Connection connection = getConnection()){
+            PreparedStatement ps = connection.prepareStatement(INSERT_USER);
+            int batchSize = 500000;
+            int numberOfThreads = 10;
+            ExecutorService executorService = Executors.newFixedThreadPool(numberOfThreads);
+            List<User> users = new ArrayList<>(batchSize);
+            User user=null;
+            for (int i = 0; i < n; i++) {
+                user = new User();
+                user.setName("User" + i);
+                user.setEmail("user" + i + "@example.com");
+                users.add(user);
+                if (users.size() == batchSize) {
+                    List<User> batch = new ArrayList<>(users);
+                    executorService.submit(() -> saveBatch(batch,ps));
+                    users.clear();
+                }
+            }
+            if (!users.isEmpty()) {
+                saveBatch(users, ps);
+            }
+            executorService.shutdown();
+            while (!executorService.isTerminated()) {
+            }
+            return true;
+        }catch (Exception e) {
+            LOGGER.error("Error in sorting users by name", e);
+            return null;
+        }
+    }
+    private void saveBatch(List<User> users,PreparedStatement ps) {
+        try {
+            for (User user : users) {
+                ps.setString(1, user.getName());
+                ps.setString(2, user.getEmail());
+                ps.setString(3, user.getPhone());
+                ps.setString(4, user.getAddress());
+                ps.setInt(5, user.getAge());
+                ps.addBatch();
+            }
+            ps.executeBatch();
+        } catch (SQLException e) {
+            LOGGER.error("Error in saving batch", e);
+        }
     }
 }
